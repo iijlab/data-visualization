@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <script src="https://cdn.plot.ly/plotly-1.2.0.min.js"></script> 
+     <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
+    <title>Line chart</title>
+</head>
+
+<body>
+
+    <div id="plot_div"></div>
+    <script>
+        const main = async () => {
+            const df = await new dfd.readCSV("https://raw.githubusercontent.com/iijlab/data-visualization/refs/heads/main/data/weather.csv")
+            df.head().print()
+
+            const traceTokyo = {
+                x: df.apply(row => `${row[0]}-${row[1]}`, { axis: 1 }).values,
+                y: df["tokyo_mean"].values,
+                type: "scatter",
+                mode: "lines+markers",
+                name: "Tokyo mean",
+                line: {
+                    dash: 'solid'
+                },
+                marker: {
+                    symbol: "circle"
+                },
+            }
+
+            const traceSapporo = {
+                x: df.apply(row => `${row[0]}-${row[1]}`, { axis: 1 }).values,
+                y: df["sapporo_mean"].values,
+                type: "scatter",
+                mode: "lines+markers",
+                name: "Sapporo mean",
+                line: {
+                    dash: 'dashdot'
+                },
+                marker: {
+                    symbol: "triangle-up"
+                }
+            }
+
+            const traceNaha = {
+                x: df.apply(row => `${row[0]}-${row[1]}`, { axis: 1 }).values,
+                y: df["naha_mean"].values,
+                type: "scatter",
+                mode: "lines+markers",
+                name: "Naha mean",
+                line: {
+                    dash: 'dot'
+                },
+                marker: {
+                    symbol: "square"
+                }
+            }
+
+            const layout = {
+                xaxis: {
+                    title: "Date"
+                },
+                yaxis: {
+                    title: "Temperature"
+                }
+            }
+
+            Plotly.newPlot("plot_div", [traceTokyo, traceSapporo, traceNaha], layout)
+        }
+        main()
+    </script>
+</body>
+
+</html>
