@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+        <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
+    <title>Box Plot chart</title>
+</head>
+
+<body>
+
+    <div id="plot_div"></div>
+    <script>
+        const main = async () => {
+            const df = await new dfd.readCSV("https://raw.githubusercontent.com/iijlab/data-visualization/refs/heads/main/data/weather.csv")
+            df.head().print()
+
+            const traceMean = {
+                x: df["tokyo_mean"].values.map(_=>"Tokyo").concat(df["sapporo_mean"].values.map(_=>"Sapporo")).concat(df["naha_mean"].values.map(_=>"Naha")),
+                y: df["tokyo_mean"].values.concat(df["sapporo_mean"].values).concat(df["naha_mean"].values),
+                type: "box",
+                name: "Mean",
+            }
+
+            const traceHigh = {
+                x: df["tokyo_high"].values.map(_=>"Tokyo").concat(df["sapporo_high"].values.map(_=>"Sapporo")).concat(df["naha_high"].values.map(_=>"Naha")),
+                y: df["tokyo_high"].values.concat(df["sapporo_high"].values).concat(df["naha_high"].values),
+                type: "box",
+                name: "High",
+            }
+
+            const traceLow = {
+                x: df["tokyo_low"].values.map(_=>"Tokyo").concat(df["sapporo_low"].values.map(_=>"Sapporo")).concat(df["naha_low"].values.map(_=>"Naha")),
+                y: df["tokyo_low"].values.concat(df["sapporo_low"].values).concat(df["naha_low"].values),
+                type: "box",
+                name: "Low",
+            }
+
+            const layout = {
+                title: "30 years of data",
+                yaxis: {
+                    title: "Temperature",
+                    zeroline: false
+                },
+                boxmode: "group"
+            }
+
+            Plotly.newPlot("plot_div", [traceMean, traceHigh, traceLow], layout)
+        }
+        main()
+    </script>
+</body>
+
+</html>
