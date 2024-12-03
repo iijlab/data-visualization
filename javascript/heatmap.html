@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+        <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
+    <title>Heatmap chart</title>
+</head>
+
+<body>
+
+    <div id="plot_div"></div>
+    <script>
+        const main = async () => {
+            const df = await new dfd.readCSV("https://raw.githubusercontent.com/iijlab/data-visualization/refs/heads/main/data/weather.csv")
+            df.head().print()
+
+            const mean = df.groupby(["year"]).col(["tokyo_mean", "tokyo_high", "tokyo_low", "sapporo_mean", "sapporo_high", "sapporo_low", "naha_mean", "naha_high", "naha_low"]).mean().apply(x=> x)
+
+            const traceMean = {
+                z: mean.values.map(row=>[row[1], row[4], row[7]]),
+                x: ["Tokyo Mean", "Sapporo Mean", "Naha Mean"],
+                y: df["year"].unique().values,
+                type: "heatmap",
+                name: "Mean",
+                xaxis: "x1",
+                yaxis: "y1",
+                legendgroup: "shared",
+                zmin: mean.min(),
+                zmax: mean.max()
+            }
+
+            const traceHigh = {
+                z: mean.values.map(row=>[row[2], row[5], row[8]]),
+                x: ["Tokyo High", "Sapporo High", "Naha High"],
+                y: df["year"].unique().values,
+                type: "heatmap",
+                name: "Mean",
+                xaxis: "x2",
+                yaxis: "y2",
+                legendgroup: "shared",
+                zmin: mean.min(),
+                zmax: mean.max()
+            }
+
+            const traceLow = {
+                z: mean.values.map(row=>[row[3], row[6], row[9]]),
+                x: ["Tokyo Low", "Sapporo Low", "Naha Low"],
+                y: df["year"].unique().values,
+                type: "heatmap",
+                name: "Mean",
+                xaxis: "x3",
+                yaxis: "y3",
+                legendgroup: "shared",
+                zmin: mean.min(),
+                zmax: mean.max()
+            }
+
+            const layout = {
+                title: "30 years of data",
+                grid: {
+                    rows: 1,
+                    columns: 3,
+                    pattern: "independent"
+                },
+                coloraxis: {
+                    cmin: mean.min(),
+                    cmax: mean.max(),
+                    showscale: true
+                },
+                yaxis1: { type: 'category' },
+                yaxis2: { type: 'category' },
+                yaxis3: { type: 'category' },
+            }
+
+            Plotly.newPlot("plot_div", [traceMean, traceHigh, traceLow], layout)
+        }
+        main()
+    </script>
+</body>
+
+</html>
