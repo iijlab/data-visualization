@@ -2,7 +2,7 @@
 
 To run the files, you don't need to install any additional software. You will need:
 
-* An internet connection
+* An Internet connection
 * A web browser
 
 To view the plots, please follow these steps:
