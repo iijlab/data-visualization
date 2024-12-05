@@ -1,0 +1,13 @@
+font.size: 14
+
+axes.spines.right: False
+axes.spines.top: False
+
+grid.linestyle: --
+
+xtick.direction: in
+ytick.direction: in
+
+figure.dpi: 240
+savefig.bbox: tight
+pdf.fonttype: 42
