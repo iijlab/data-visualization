@@ -17,68 +17,77 @@
             const df = await new dfd.readCSV("https://raw.githubusercontent.com/iijlab/data-visualization/refs/heads/main/data/weather.csv")
             df.head().print()
 
-            const mean = df.groupby(["year"]).col(["tokyo_mean", "tokyo_high", "tokyo_low", "sapporo_mean", "sapporo_high", "sapporo_low", "naha_mean", "naha_high", "naha_low"]).mean().apply(x=> x)
+            const years = df["year"].values
+            const cols = ["tokyo_mean", "tokyo_high", "tokyo_low", "sapporo_mean", "sapporo_high", "sapporo_low", "naha_mean", "naha_high", "naha_low"]
+            const min = Math.min(...cols.map(val => df[val].min()))
+            const max = Math.max(...cols.map(val => df[val].max()))
 
-            const traceMean = {
-                z: mean.values.map(row=>[row[1], row[4], row[7]]),
-                x: ["Tokyo Mean", "Sapporo Mean", "Naha Mean"],
-                y: df["year"].unique().values,
+            const traceLow = {
+                z: df.values.map(row=>[row[4], row[7], row[10]]),
+                x: ["Tokyo Low", "Sapporo Low", "Naha Low"],
                 type: "heatmap",
-                name: "Mean",
                 xaxis: "x1",
                 yaxis: "y1",
+                legendgroup: "low",
+                coloraxis: "coloraxis",
+                zmin: min,
+                zmax: max
+            }
+            
+            const traceMean = {
+                z: df.values.map(row=>[row[2], row[5], row[8]]),
+                x: ["Tokyo Mean", "Sapporo Mean", "Naha Mean"],
+                type: "heatmap",
+                xaxis: "x2",
+                yaxis: "y2",
                 legendgroup: "mean",
                 coloraxis: "coloraxis",
-                zmin: mean.min(),
-                zmax: mean.max()
+                zmin: min,
+                zmax: max
             }
 
             const traceHigh = {
-                z: mean.values.map(row=>[row[2], row[5], row[8]]),
+                z: df.values.map(row=>[row[3], row[6], row[9]]),
                 x: ["Tokyo High", "Sapporo High", "Naha High"],
-                y: df["year"].unique().values,
                 type: "heatmap",
-                name: "Mean",
-                xaxis: "x2",
-                yaxis: "y2",
-                legendgroup: "high",
-                coloraxis: "coloraxis",
-                zmin: mean.min(),
-                zmax: mean.max()
-            }
-
-            const traceLow = {
-                z: mean.values.map(row=>[row[3], row[6], row[9]]),
-                x: ["Tokyo Low", "Sapporo Low", "Naha Low"],
-                y: df["year"].unique().values,
-                type: "heatmap",
-                name: "Mean",
                 xaxis: "x3",
                 yaxis: "y3",
-                legendgroup: "low",
+                legendgroup: "high",
                 coloraxis: "coloraxis",
-                zmin: mean.min(),
-                zmax: mean.max()
+                zmin: min,
+                zmax: max
             }
 
+            const tickvals = Array.from({length: years.length}, (_, i) => i).filter(i => i % 12 === 0)
+            const ticktext = Array.from({length: years.length}, (_, i) => i % 12 === 0 ? years[i] : '').filter((text, i) => i % 12 === 0)
+
             const layout = {
-                title: "30 years of data",
+                height: 1000,
                 grid: {
                     rows: 1,
                     columns: 3,
                     pattern: "independent"
                 },
                 coloraxis: {
-                    cmin: mean.min(),
-                    cmax: mean.max(),
+                    cmin: min,
+                    cmax: max,
                     showscale: true
                 },
-                yaxis1: { type: 'category' },
-                yaxis2: { type: 'category' },
-                yaxis3: { type: 'category' },
+                yaxis1: { 
+                    tickvals: tickvals,
+                    ticktext: ticktext,
+                 },
+                yaxis2: { 
+                    tickvals: tickvals,
+                    ticktext: ticktext,
+                 },
+                yaxis3: { 
+                    tickvals: tickvals,
+                    ticktext: ticktext,
+                 },
             }
 
-            Plotly.newPlot("plot_div", [traceMean, traceHigh, traceLow], layout)
+            Plotly.newPlot("plot_div", [traceLow, traceMean, traceHigh], layout)
         }
         main()
     </script>

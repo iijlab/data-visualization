@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+        <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
+    <title>Error Bar chart</title>
+</head>
+
+<body>
+
+    <div id="plot_div"></div>
+    <script>
+        const main = async () => {
+            const df = await new dfd.readCSV("https://raw.githubusercontent.com/iijlab/data-visualization/refs/heads/main/data/weather.csv")
+
+            const temp1993 = df.loc({ rows: df.eq([1999])["year"] })
+            temp1993.head().print()
+
+            const months = temp1993["month"].values
+
+            const traceTokyoMean = {
+                x: months,
+                y: temp1993["tokyo_mean"].values,
+                type: "scatter",
+                mode: "lines",
+                name: "Mean"
+            }
+
+            const traceTokyoExtrema = {
+                x: months.concat([...months].reverse()),
+                y: temp1993["tokyo_high"].values.concat(temp1993["tokyo_low"].values.reverse()),
+                type: "scatter",
+                fill: "tozerox",
+                fillcolor: "rgba(231,107,243,0.2)",
+                line: {color: "transparent"},
+                name: "Extrema"
+            }
+
+            const layout = {
+                title: "Monthly Temperature in Tokyo (1999)",
+                xaxis: {
+                    title: "Month",
+                    tickmode: "array",
+                    tickvals: months,
+                    range: [1, 12]
+                },
+                yaxis: {
+                    title: "Temperature",
+                    range: [-5, 40]
+                }
+            }
+
+            Plotly.newPlot("plot_div", [traceTokyoMean, traceTokyoExtrema], layout)
+        }
+        main()
+    </script>
+</body>
+
+</html>

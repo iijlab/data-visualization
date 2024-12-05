@@ -39,7 +39,7 @@
             }
 
             const layout = {
-                title: "30 years of data",
+                title: "Distribution of Monthly Temperatures (1994 - 2024)",
                 yaxis: {
                     title: "Temperature",
                     zeroline: false
@@ -47,7 +47,7 @@
                 boxmode: "group"
             }
 
-            Plotly.newPlot("plot_div", [traceMean, traceHigh, traceLow], layout)
+            Plotly.newPlot("plot_div", [traceLow, traceMean, traceHigh], layout)
         }
         main()
     </script>
