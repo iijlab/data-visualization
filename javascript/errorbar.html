@@ -2,59 +2,79 @@
 <html lang="en">
 
 <head>
+    <!-- Meta tags for character set and viewport settings for responsive design -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
-        <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
+    
+    <!-- Include Plotly.js for creating interactive charts -->
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+    
+    <!-- Include Danfo.js for handling and processing data (like pandas in Python) -->
+    <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
+    
+    <!-- Title of the webpage -->
     <title>Error Bar chart</title>
 </head>
 
 <body>
-
+    <!-- A container div where the Plotly chart will be rendered -->
     <div id="plot_div"></div>
+
     <script>
+        // Asynchronous function to fetch data and generate the error bar chart
         const main = async () => {
+            // Fetch weather data from a CSV file hosted on GitHub using Danfo.js
             const df = await new dfd.readCSV("https://raw.githubusercontent.com/iijlab/data-visualization/refs/heads/main/data/weather.csv")
 
+            // Filter the data for the year 1999 and store it in temp1993
             const temp1993 = df.loc({ rows: df.eq([1999])["year"] })
+            
+            // Print the first few rows of the filtered dataset for inspection
             temp1993.head().print()
 
+            // Get the months for the filtered data
             const months = temp1993["month"].values
 
+            // Define the trace for Tokyo's mean temperature with a line chart
             const traceTokyoMean = {
-                x: months,
-                y: temp1993["tokyo_mean"].values,
-                type: "scatter",
-                mode: "lines",
-                name: "Mean"
+                x: months,  // X-axis represents the months
+                y: temp1993["tokyo_mean"].values,  // Y-axis represents the mean temperatures
+                type: "scatter",  // Type of plot (scatter plot with lines)
+                mode: "lines",  // Line mode for connecting data points
+                name: "Mean"  // Label for this trace
             }
 
+            // Define the trace for Tokyo's extreme temperatures (high and low) with a filled area chart
             const traceTokyoExtrema = {
-                x: months.concat([...months].reverse()),
-                y: temp1993["tokyo_high"].values.concat(temp1993["tokyo_low"].values.reverse()),
-                type: "scatter",
-                fill: "tozerox",
-                fillcolor: "rgba(231,107,243,0.2)",
-                line: {color: "transparent"},
-                name: "Extrema"
+                x: months.concat([...months].reverse()),  // X-axis values (months and reversed months)
+                y: temp1993["tokyo_high"].values.concat(temp1993["tokyo_low"].values.reverse()),  // Y-axis values (high and low temperatures)
+                type: "scatter",  // Scatter plot type
+                fill: "tozerox",  // Fill the area under the curve
+                fillcolor: "rgba(231,107,243,0.2)",  // Set the fill color with transparency
+                line: {color: "transparent"},  // Make the line transparent
+                name: "Extrema"  // Label for this trace
             }
 
+            // Layout configuration for the error bar chart (chart title and axis settings)
             const layout = {
-                title: "Monthly Temperature in Tokyo (1999)",
+                title: "Monthly Temperature in Tokyo (1999)",  // Chart title
                 xaxis: {
-                    title: "Month",
-                    tickmode: "array",
-                    tickvals: months,
-                    range: [1, 12]
+                    title: "Month",  // X-axis title
+                    tickmode: "array",  // Set the tick mode to array for custom tick values
+                    tickvals: months,  // Set tick values as the months
+                    range: [1, 12]  // Set the range of the months (1 to 12)
                 },
                 yaxis: {
-                    title: "Temperature",
-                    range: [-5, 40]
+                    title: "Temperature",  // Y-axis title
+                    range: [-5, 40]  // Set the range for temperature from -5 to 40°C
                 }
             }
 
+            // Create the Plotly chart with the defined traces and layout
             Plotly.newPlot("plot_div", [traceTokyoMean, traceTokyoExtrema], layout)
         }
+
+        // Run the main function to generate the plot
         main()
     </script>
 </body>

@@ -2,93 +2,118 @@
 <html lang="en">
 
 <head>
+    <!-- Meta tags for character set and viewport settings for responsive design -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
-        <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
+    
+    <!-- Include Plotly.js for creating interactive charts -->
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+    
+    <!-- Include Danfo.js for handling and processing data (like pandas in Python) -->
+    <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
+    
+    <!-- Title of the webpage -->
     <title>Heatmap chart</title>
 </head>
 
 <body>
-
+    <!-- A container div where the Plotly heatmap will be rendered -->
     <div id="plot_div"></div>
+
     <script>
+        // Asynchronous function to fetch data and generate the heatmap chart
         const main = async () => {
+            // Fetch weather data from a CSV file hosted on GitHub using Danfo.js
             const df = await new dfd.readCSV("https://raw.githubusercontent.com/iijlab/data-visualization/refs/heads/main/data/weather.csv")
+            
+            // Print the first few rows of the dataset to the console for inspection
             df.head().print()
 
+            // Extract the 'year' values from the dataframe for later use
             const years = df["year"].values
+
+            // Define the columns for the temperature data (mean, high, low for each city)
             const cols = ["tokyo_mean", "tokyo_high", "tokyo_low", "sapporo_mean", "sapporo_high", "sapporo_low", "naha_mean", "naha_high", "naha_low"]
+            
+            // Determine the minimum and maximum values across the columns to set the color scale range
             const min = Math.min(...cols.map(val => df[val].min()))
             const max = Math.max(...cols.map(val => df[val].max()))
 
+            // Define the trace for the 'Low' temperature heatmap (Tokyo, Sapporo, Naha)
             const traceLow = {
-                z: df.values.map(row=>[row[4], row[7], row[10]]),
-                x: ["Tokyo Low", "Sapporo Low", "Naha Low"],
-                type: "heatmap",
-                xaxis: "x1",
-                yaxis: "y1",
-                legendgroup: "low",
-                coloraxis: "coloraxis",
-                zmin: min,
-                zmax: max
+                z: df.values.map(row => [row[4], row[7], row[10]]),  // Z-axis values for low temperatures
+                x: ["Tokyo Low", "Sapporo Low", "Naha Low"],  // X-axis labels (cities and low temperatures)
+                type: "heatmap",  // Type of plot (heatmap)
+                xaxis: "x1",  // X-axis reference for this trace
+                yaxis: "y1",  // Y-axis reference for this trace
+                legendgroup: "low",  // Grouping in the legend for 'Low' temperatures
+                coloraxis: "coloraxis",  // Reference to color axis for the color scale
+                zmin: min,  // Set the minimum value for the color scale
+                zmax: max,  // Set the maximum value for the color scale
             }
-            
+
+            // Define the trace for the 'Mean' temperature heatmap (Tokyo, Sapporo, Naha)
             const traceMean = {
-                z: df.values.map(row=>[row[2], row[5], row[8]]),
-                x: ["Tokyo Mean", "Sapporo Mean", "Naha Mean"],
-                type: "heatmap",
-                xaxis: "x2",
-                yaxis: "y2",
-                legendgroup: "mean",
-                coloraxis: "coloraxis",
-                zmin: min,
-                zmax: max
+                z: df.values.map(row => [row[2], row[5], row[8]]),  // Z-axis values for mean temperatures
+                x: ["Tokyo Mean", "Sapporo Mean", "Naha Mean"],  // X-axis labels (cities and mean temperatures)
+                type: "heatmap",  // Type of plot (heatmap)
+                xaxis: "x2",  // X-axis reference for this trace
+                yaxis: "y2",  // Y-axis reference for this trace
+                legendgroup: "mean",  // Grouping in the legend for 'Mean' temperatures
+                coloraxis: "coloraxis",  // Reference to color axis for the color scale
+                zmin: min,  // Set the minimum value for the color scale
+                zmax: max,  // Set the maximum value for the color scale
             }
 
+            // Define the trace for the 'High' temperature heatmap (Tokyo, Sapporo, Naha)
             const traceHigh = {
-                z: df.values.map(row=>[row[3], row[6], row[9]]),
-                x: ["Tokyo High", "Sapporo High", "Naha High"],
-                type: "heatmap",
-                xaxis: "x3",
-                yaxis: "y3",
-                legendgroup: "high",
-                coloraxis: "coloraxis",
-                zmin: min,
-                zmax: max
+                z: df.values.map(row => [row[3], row[6], row[9]]),  // Z-axis values for high temperatures
+                x: ["Tokyo High", "Sapporo High", "Naha High"],  // X-axis labels (cities and high temperatures)
+                type: "heatmap",  // Type of plot (heatmap)
+                xaxis: "x3",  // X-axis reference for this trace
+                yaxis: "y3",  // Y-axis reference for this trace
+                legendgroup: "high",  // Grouping in the legend for 'High' temperatures
+                coloraxis: "coloraxis",  // Reference to color axis for the color scale
+                zmin: min,  // Set the minimum value for the color scale
+                zmax: max,  // Set the maximum value for the color scale
             }
 
-            const tickvals = Array.from({length: years.length}, (_, i) => i).filter(i => i % 12 === 0)
-            const ticktext = Array.from({length: years.length}, (_, i) => i % 12 === 0 ? years[i] : '').filter((text, i) => i % 12 === 0)
+            // Generate the tick values and tick labels for the y-axis (for every 12th year)
+            const tickvals = Array.from({ length: years.length }, (_, i) => i).filter(i => i % 12 === 0)
+            const ticktext = Array.from({ length: years.length }, (_, i) => i % 12 === 0 ? years[i] : '').filter((text, i) => i % 12 === 0)
 
+            // Layout configuration for the heatmap chart (chart title, axis settings, and color scale)
             const layout = {
-                height: 1000,
+                height: 1000,  // Set the height of the chart
                 grid: {
-                    rows: 1,
-                    columns: 3,
-                    pattern: "independent"
+                    rows: 1,  // Set the number of rows in the grid (1 row in this case)
+                    columns: 3,  // Set the number of columns in the grid (3 columns for the three temperature types)
+                    pattern: "independent"  // Ensure each trace has its own axis
                 },
                 coloraxis: {
-                    cmin: min,
-                    cmax: max,
-                    showscale: true
+                    cmin: min,  // Set the minimum value for the color scale
+                    cmax: max,  // Set the maximum value for the color scale
+                    showscale: true  // Display the color scale
                 },
                 yaxis1: { 
-                    tickvals: tickvals,
-                    ticktext: ticktext,
-                 },
+                    tickvals: tickvals,  // Set the tick values for the y-axis (years)
+                    ticktext: ticktext,  // Set the tick text labels for the y-axis
+                },
                 yaxis2: { 
-                    tickvals: tickvals,
-                    ticktext: ticktext,
-                 },
+                    tickvals: tickvals,  // Set the tick values for the second y-axis
+                    ticktext: ticktext,  // Set the tick text labels for the second y-axis
+                },
                 yaxis3: { 
-                    tickvals: tickvals,
-                    ticktext: ticktext,
-                 },
+                    tickvals: tickvals,  // Set the tick values for the third y-axis
+                    ticktext: ticktext,  // Set the tick text labels for the third y-axis
+                },
             }
 
+            // Create the Plotly heatmap with the defined traces and layout
             Plotly.newPlot("plot_div", [traceLow, traceMean, traceHigh], layout)
         }
+
+        // Run the main function to generate the plot
         main()
     </script>
 </body>
