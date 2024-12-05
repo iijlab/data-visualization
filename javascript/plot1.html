@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta tags for character set and viewport settings for responsive design -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Include Plotly.js for creating interactive charts -->
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+    
+    <!-- Include Danfo.js for handling and processing data (similar to pandas in Python) -->
+    <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
+    
+    <!-- Title of the webpage -->
+    <title>P2P: Data Visualization</title>
+    
+    <!-- Optional: Adding some custom styling for better visual appeal -->
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header styling */
+        .header {
+            background-color: #333;
+            padding: 15px;
+            color: white;
+            text-align: center;
+        }
+
+        /* Navigation menu */
+        nav {
+            text-align: center;
+            margin-top: 10px;
+            padding-top: 20px;
+        }
+
+        nav a {
+            color: white;
+            padding: 10px 20px;
+            margin: 0 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            background-color: #555;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #777;
+        }
+
+        /* Content area for charts */
+        .content {
+            display: none;
+            padding: 20px;
+        }
+
+        /* Styling for visible chart content */
+        .content.active {
+            display: block;
+        }
+
+        #plot_div {
+            width: 80%;
+            height: 80%;
+            padding-top: 30px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Title for the chart -->
+    <div class="header">
+        <h1>P2P: Data Visualization</h1>
+    </div>
+
+    <!-- Navigation menu -->
+    <nav>
+        <a href="./plot1.html">Plot 1</a>
+        <a href="./plot2.html">Plot 2</a>
+        <a href="./plot3.html">Plot 3</a>
+        <a href="./plot4.html">Plot 4</a>
+    </nav>
+    
+    <!-- A container div where the Plotly line chart will be rendered -->
+    <div id="plot_div"></div>
+
+    <script>
+        // Asynchronous function to fetch data and generate the line chart
+        const main = async () => {
+            // Fetch weather data from a CSV file hosted on GitHub using Danfo.js
+            const df = await new dfd.readCSV("https://raw.githubusercontent.com/iijlab/data-visualization/refs/heads/main/data/weather.csv")
+            
+            // Print the first few rows of the dataset to the console for inspection
+            df.head().print()
+
+            // Define the trace for Tokyo's average temperatures over time
+            const traceTokyo = {
+                // x-axis values represent the date in "Year-Month" format
+                x: df.apply(row => `${row[0]}-${row[1]}`, { axis: 1 }).values,
+                // y-axis values represent the "tokyo_mean" column (average temperature in Tokyo)
+                y: df["tokyo_mean"].values,
+                type: "scatter",  // Scatter plot for line chart
+                mode: "lines+markers",  // Display both lines and markers
+                name: "Tokyo Mean",  // Legend entry for this trace
+                line: {
+                    color: '#1f77b4',  // Blue color for Tokyo's line
+                    dash: 'solid'  // Solid line style for Tokyo
+                },
+                marker: {
+                    symbol: "circle",  // Circle marker for data points in Tokyo
+                    size: 8  // Larger markers for visibility
+                },
+            }
+
+            // Define the trace for Sapporo's average temperatures over time
+            const traceSapporo = {
+                // x-axis values represent the date in "Year-Month" format
+                x: df.apply(row => `${row[0]}-${row[1]}`, { axis: 1 }).values,
+                // y-axis values represent the "sapporo_mean" column (average temperature in Sapporo)
+                y: df["sapporo_mean"].values,
+                type: "scatter",  // Scatter plot for line chart
+                mode: "lines+markers",  // Display both lines and markers
+                name: "Sapporo Mean",  // Legend entry for this trace
+                line: {
+                    color: '#ff7f0e',  // Orange color for Sapporo's line
+                    dash: 'dashdot'  // Dash-dot line style for Sapporo
+                },
+                marker: {
+                    symbol: "triangle-up",  // Triangle-up marker for data points in Sapporo
+                    size: 8  // Larger markers for visibility
+                }
+            }
+
+            // Define the trace for Naha's average temperatures over time
+            const traceNaha = {
+                // x-axis values represent the date in "Year-Month" format
+                x: df.apply(row => `${row[0]}-${row[1]}`, { axis: 1 }).values,
+                // y-axis values represent the "naha_mean" column (average temperature in Naha)
+                y: df["naha_mean"].values,
+                type: "scatter",  // Scatter plot for line chart
+                mode: "lines+markers",  // Display both lines and markers
+                name: "Naha Mean",  // Legend entry for this trace
+                line: {
+                    color: '#2ca02c',  // Green color for Naha's line
+                    dash: 'dot'  // Dotted line style for Naha
+                },
+                marker: {
+                    symbol: "square",  // Square marker for data points in Naha
+                    size: 8  // Larger markers for visibility
+                }
+            }
+
+            // Layout configuration for the line chart (chart title and axis titles)
+            const layout = {
+                title: {
+                    text: "Distribution of Monthly Temperatures (1994 - 2024)",  // Title of the chart
+                    font: {
+                        size: 24,  // Larger font size for the title
+                        family: 'Arial, sans-serif',  // Font family for the title
+                        color: '#333'  // Title color
+                    }
+                },
+                xaxis: {
+                    title: {
+                        text: "Date",  // Label for the x-axis (time in "Year-Month" format)
+                        font: {
+                            size: 16,  // Font size for the x-axis title
+                            color: '#333'  // Color for the x-axis title
+                        }
+                    },
+                    tickangle: -45,  // Rotate x-axis labels for better readability
+                    showgrid: false  // Remove grid lines for a cleaner look
+                },
+                yaxis: {
+                    title: {
+                        text: "Temperature (°C)",  // Label for the y-axis (temperature values)
+                        font: {
+                            size: 16,  // Font size for the y-axis title
+                            color: '#333'  // Color for the y-axis title
+                        }
+                    },
+                    showgrid: true,  // Display grid lines on the y-axis for better readability
+                },
+                legend: {
+                    orientation: "h",  // Horizontal legend
+                    x: 0.5,  // Center the legend
+                    y: -0.2,  // Adjust legend position to avoid overlap
+                    xanchor: "center"
+                },
+                margin: { 
+                    t: 80, r: 50, b: 80, l: 50  // Adjusting margins for better spacing
+                },
+                plot_bgcolor: '#f4f7fc',  // Set the background color of the plot area
+            }
+
+            // Create the Plotly line chart with the defined traces and layout
+            Plotly.newPlot("plot_div", [traceTokyo, traceSapporo, traceNaha], layout)
+        }
+
+        // Run the main function to generate the plot
+        main()
+    </script>
+</body>
+
+</html>

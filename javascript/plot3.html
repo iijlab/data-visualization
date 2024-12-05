@@ -13,10 +13,86 @@
     <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
     
     <!-- Title of the webpage -->
-    <title>Heatmap chart</title>
+    <title>P2P: Data Visualization</title>
+    
+    <!-- Optional: Adding some custom styling for better visual appeal -->
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header styling */
+        .header {
+            background-color: #333;
+            padding: 15px;
+            color: white;
+            text-align: center;
+        }
+
+        /* Navigation menu */
+        nav {
+            text-align: center;
+            margin-top: 10px;
+            padding-top: 20px;
+        }
+
+        nav a {
+            color: white;
+            padding: 10px 20px;
+            margin: 0 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            background-color: #555;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #777;
+        }
+
+        /* Content area for charts */
+        .content {
+            display: none;
+            padding: 20px;
+        }
+
+        /* Styling for visible chart content */
+        .content.active {
+            display: block;
+        }
+
+        #plot_div {
+            width: 80%;
+            height: 80%;
+            padding-top: 30px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+    </style>
 </head>
 
 <body>
+    <!-- Title for the chart -->
+    <div class="header">
+        <h1>P2P: Data Visualization</h1>
+    </div>
+
+    <!-- Navigation menu -->
+    <nav>
+        <a href="./plot1.html">Plot 1</a>
+        <a href="./plot2.html">Plot 2</a>
+        <a href="./plot3.html">Plot 3</a>
+        <a href="./plot4.html">Plot 4</a>
+    </nav>
+    
     <!-- A container div where the Plotly heatmap will be rendered -->
     <div id="plot_div"></div>
 
@@ -44,6 +120,7 @@
                 z: df.values.map(row => [row[4], row[7], row[10]]),  // Z-axis values for low temperatures
                 x: ["Tokyo Low", "Sapporo Low", "Naha Low"],  // X-axis labels (cities and low temperatures)
                 type: "heatmap",  // Type of plot (heatmap)
+                colorscale: "Viridis",  // A more modern color scale
                 xaxis: "x1",  // X-axis reference for this trace
                 yaxis: "y1",  // Y-axis reference for this trace
                 legendgroup: "low",  // Grouping in the legend for 'Low' temperatures
@@ -57,6 +134,7 @@
                 z: df.values.map(row => [row[2], row[5], row[8]]),  // Z-axis values for mean temperatures
                 x: ["Tokyo Mean", "Sapporo Mean", "Naha Mean"],  // X-axis labels (cities and mean temperatures)
                 type: "heatmap",  // Type of plot (heatmap)
+                colorscale: "Cividis",  // A modern color scale with better contrast
                 xaxis: "x2",  // X-axis reference for this trace
                 yaxis: "y2",  // Y-axis reference for this trace
                 legendgroup: "mean",  // Grouping in the legend for 'Mean' temperatures
@@ -70,6 +148,7 @@
                 z: df.values.map(row => [row[3], row[6], row[9]]),  // Z-axis values for high temperatures
                 x: ["Tokyo High", "Sapporo High", "Naha High"],  // X-axis labels (cities and high temperatures)
                 type: "heatmap",  // Type of plot (heatmap)
+                colorscale: "Plasma",  // A vibrant color scale
                 xaxis: "x3",  // X-axis reference for this trace
                 yaxis: "y3",  // Y-axis reference for this trace
                 legendgroup: "high",  // Grouping in the legend for 'High' temperatures
@@ -84,7 +163,13 @@
 
             // Layout configuration for the heatmap chart (chart title, axis settings, and color scale)
             const layout = {
-                height: 1000,  // Set the height of the chart
+                height: 800,  // Set the height of the chart
+                title: "Yearly Temperature Trends (Low, Mean, High)",  // Chart title
+                titlefont: {
+                    family: 'Arial, sans-serif',  // Title font style
+                    size: 20,  // Title font size
+                    color: '#444'  // Title font color
+                },
                 grid: {
                     rows: 1,  // Set the number of rows in the grid (1 row in this case)
                     columns: 3,  // Set the number of columns in the grid (3 columns for the three temperature types)
@@ -93,20 +178,33 @@
                 coloraxis: {
                     cmin: min,  // Set the minimum value for the color scale
                     cmax: max,  // Set the maximum value for the color scale
-                    showscale: true  // Display the color scale
+                    showscale: true,  // Display the color scale
+                    colorscale: 'Jet'  // Define a more visually appealing color scale
                 },
                 yaxis1: { 
+                    title: "Year",  // Y-axis title
                     tickvals: tickvals,  // Set the tick values for the y-axis (years)
                     ticktext: ticktext,  // Set the tick text labels for the y-axis
+                    tickangle: 45  // Rotate y-axis tick labels for better readability
                 },
                 yaxis2: { 
+                    title: "Year",  // Y-axis title for second axis
                     tickvals: tickvals,  // Set the tick values for the second y-axis
                     ticktext: ticktext,  // Set the tick text labels for the second y-axis
+                    tickangle: 45  // Rotate y-axis tick labels
                 },
                 yaxis3: { 
+                    title: "Year",  // Y-axis title for third axis
                     tickvals: tickvals,  // Set the tick values for the third y-axis
                     ticktext: ticktext,  // Set the tick text labels for the third y-axis
+                    tickangle: 45  // Rotate y-axis tick labels
                 },
+                margin: {
+                    t: 80,  // Set the top margin
+                    b: 100,  // Set the bottom margin
+                    l: 50,   // Set the left margin
+                    r: 50    // Set the right margin
+                }
             }
 
             // Create the Plotly heatmap with the defined traces and layout
