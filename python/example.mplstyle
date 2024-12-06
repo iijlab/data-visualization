@@ -1,13 +1,20 @@
+# Make default font larger
 font.size: 14
 
+# Do not show top and right border of plot
 axes.spines.right: False
 axes.spines.top: False
 
+# Make grid dashed by default
 grid.linestyle: --
 
+# Draw ticks towards the inside
 xtick.direction: in
 ytick.direction: in
 
+# Increase default figure DPI
 figure.dpi: 240
+# Reduce figure padding
 savefig.bbox: tight
+# Use TrueType fonts
 pdf.fonttype: 42
