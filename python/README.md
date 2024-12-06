@@ -8,5 +8,5 @@ Create a virtual environment and install dependencies.
 ```bash
 python3 -m venv --upgrade-deps .venv
 source .venv/bin/activate
-pip install -r requirements
+pip install -r requirements.txt
 ```
